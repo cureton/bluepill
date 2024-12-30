@@ -459,14 +459,20 @@ One of the big bonuses of using CMake is that it will hook into existing tools v
 ** GDB
 The first basic step is hookin' up a debugger.
 
-For some reason Debian (Testing) is missing a ~arm-none-eabi-gdb~, so I had to just download the whole GCC toolchain from [[https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads][ARM's website]] (this only works assuming you're running on a x64 machine). Just whatever you end up using, make sure you don't just run the system GDB! It won't throw you any errors and it will kinda work.. till it doesn't. 
+The host system will likely have have GDB installed for the host architecture (probably x64). Debain packages a gdb debugger that can handle many differet archectures called gdb-multiarch. A key feature of this version of gdb is that is will detect the archtecture to use based on the .elf file that you provided.
 
-Once we have the right version of *GDB* the next part becomes super easy b/c by default *OpenOCD* will provide us with a GDB server to which we can connect. We just need to disable the part where we flash the program and exit and replace it with a command to reset the chip and wait for GDB
+#+BEGIN_SRC 
+apt-get install gdb-multiarch
+#+END_SRC 
+
+make sure you don't run the system GDB! It won't throw you any errors and it will kinda work.. till it doesn't. 
+
+Once we have the multiarch version of *GDB* the next part becomes super easy b/c by default *OpenOCD* will provide us with a GDB server to which we can connect. We just need to disable the part where we flash the program and exit and replace it with a command to reset the chip and wait for GDB
 
 #+BEGIN_SRC c :tangle openocd_debug.cfg
-source [find interface/stlink-v2.cfg]
+source [find interface/stlink.cfg]
 transport select hla_swd
-source [find target/stm32f1x_stlink.cfg]
+source [find board/stm32f103c8_blue_pill.cfg
 reset_config srst_nogate
 #+END_SRC
 
@@ -493,7 +499,7 @@ Info : Target voltage: 2.913562
 Info : stm32f1x.cpu: hardware has 6 breakpoints, 4 watchpoints
 #+END_QUOTE
 
-We open another terminal and run our ~arm-none-eabi-gdb~ to bring up the GDB "shell" The next few steps will connect to the OpenOCD server, stop the program running on it, unlock the chip, and load our new program
+We open another terminal and run our ~gdb-multiarch blinky.elf~ to bring up the GDB "shell". The next few steps will connect to the OpenOCD server, stop the program running on it, unlock the chip, and load our new program
 
 #+BEGIN_SRC 
 > target remote localhost:3333
@@ -501,8 +507,6 @@ We open another terminal and run our ~arm-none-eabi-gdb~ to bring up the GDB "sh
 > monitor stm32f1x unlock 0
 > load blinky.elf
 #+END_SRC
-
-Now you can set breakpoint, run code, inspect the stack and variables, etc. etc. Look at the GDB manual for all the juicy details - and don't forget about the very handy [[https://ftp.gnu.org/old-gnu/Manuals/gdb-5.1.1/html_chapter/gdb_19.html][TUI Mode]]. Start it with ~C-x C-a~, then hit ~C-x 2~ to bring up the assembly. And type ~s~ or ~n~ to step one line of code at a time and ~si~ to step one assembly instruction at a time!
 
 ** KDevelop
 
