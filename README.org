@@ -508,6 +508,7 @@ We open another terminal and run our ~gdb-multiarch blinky.elf~ to bring up the 
 > load blinky.elf
 #+END_SRC
 
+Now you can set breakpoint, run code, inspect the stack and variables, etc. etc. Look at the GDB manual for all the juicy details - and don't forget about the very handy [[https://ftp.gnu.org/old-gnu/Manuals/gdb-5.1.1/html_chapter/gdb_19.html][TUI Mode]]. Start it with ~C-x C-a~, then hit ~C-x 2~ to bring up the assembly and/or source code. Pressing ~C-x 2~ again will toggle between source, assembler, and registers.  Pressing  And type ~s~ or ~n~ to step one line of code at a time and ~si~ to step one assembly instruction at a time!
 ** KDevelop
 
 To demonstrate how flexible things get thanks to CMake, next I'll show you how to setup KDevelop to run everything for us. In principle this should work equally well with QtCreator or CLion or CQuery/Emacs. You can even hook up linters and other fancy Clang based tools now pretty easily. So this isn't an endorsement of KDevelop over the alternatives b/c after all it's sorta like Visual Studio - a big drop-box driven mess - but I'm just familiar with it and it's quick and easy to get up and running with a CMake project. We'll be able to jump around our code and refactor things in no time. The easiest way to get started is to just get the KDevelop AppImage from [[https://www.kdevelop.org/download][their website]]. Download it, make it executable with ~chmod +x $KDevelopAppImageFile~ and run!
